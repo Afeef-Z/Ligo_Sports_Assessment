@@ -29,14 +29,48 @@ const getPlayers = (array, playerId) => {
   return games;
 };
 
-app.get("/games/:playerId", async (req, res) =>  {
+app.get("/games/:playerId", async (req, res) => {
   await promise.then(function (arr) {
     playerId = req.params.playerId;
+    const keys = [
+      "BA (Batting avg)",
+      "PA (Plate appereances)",
+      "AB (AtBats)",
+      "R (Runs)",
+      "H (Hits)",
+      "RBI (Runs Batted In)",
+      "2B (Doubles)",
+      "3B (Triples)",
+      "HR (Homerun)",
+    ];
+
+    const getInitilizedkeys = () => {
+      totals = {};
+      keys.forEach((key) => {
+        totals[key] = 0;
+      });
+      return totals;
+    };
+
+    totals = getInitilizedkeys();
     let games = getPlayers(arr, playerId);
+
+
+    keys.forEach((key) => {
+      totals[key] = games.reduce(
+        (accumulator, currentValue) =>
+          accumulator + parseFloat(currentValue[key]),
+        0
+      );
+    });
+
     if (games.length < 1) {
-      res.status(404);
+      res.json(404);
     } else {
-      res.json(games);
+      tempHash = {};
+      tempHash["Total Stats"] = { PlayerID: playerId, ...totals };
+      tempHash["Individual games"] = games;
+      res.json(tempHash);
     }
   });
 });
