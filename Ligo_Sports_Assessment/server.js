@@ -41,6 +41,25 @@ app.get("/games/:playerId", async (req, res) =>  {
   });
 });
 
+app.post("/players", async (req, res) => {
+  let temp_array = [];
+  await promise.then(function (arr) {
+    temp_array = arr;
+    temp_array.push(req.body);
+    const csv = new ObjectsToCsv(temp_array);
+    csv.toDisk(csvFile);
+  });
+
+  const new_player = req.body.PlayerId;
+  let games = getPlayers(temp_array, new_player);
+
+  if (games.length < 1) {
+    res.json(404);
+  } else {
+    res.json(games);
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
