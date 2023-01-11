@@ -19,12 +19,24 @@ const promise = new Promise((resolve, reject) => {
     .on("error", reject);
 });
 
+const getPlayers = (array, playerId) => {
+  const games = [];
+  array.forEach((e) => {
+    if (e.PlayerId == playerId) {
+      games.push(e);
+    }
+  });
+  return games;
+};
+
 app.get("/games/:playerId", async (req, res) =>  {
   await promise.then(function (arr) {
-    if (arr.length < 1) {
+    playerId = req.params.playerId;
+    let games = getPlayers(arr, playerId);
+    if (games.length < 1) {
       res.status(404);
     } else {
-      res.json(arr);
+      res.json(games);
     }
   });
 });
