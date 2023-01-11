@@ -6,8 +6,9 @@ const { parse } = require("csv-parse");
 const ObjectsToCsv = require("objects-to-csv");
 app.use(express.json());
 
+// file path
 const csvFile = "./data.csv";
-
+// Reading the .csv file and return its value
 const promise = new Promise((resolve, reject) => {
   const arr = [];
   fs.createReadStream(csvFile)
@@ -19,6 +20,7 @@ const promise = new Promise((resolve, reject) => {
     .on("error", reject);
 });
 
+// filter out only the data for specfic player
 const getPlayers = (array, playerId) => {
   const games = [];
   array.forEach((e) => {
@@ -28,7 +30,7 @@ const getPlayers = (array, playerId) => {
   });
   return games;
 };
-
+// method for handling the GET request
 app.get("/games/:playerId", async (req, res) => {
   await promise.then(function (arr) {
     playerId = req.params.playerId;
@@ -43,7 +45,7 @@ app.get("/games/:playerId", async (req, res) => {
       "3B (Triples)",
       "HR (Homerun)",
     ];
-
+    // initializing the values for keys and returning the value
     const getInitilizedkeys = () => {
       totals = {};
       keys.forEach((key) => {
@@ -55,7 +57,7 @@ app.get("/games/:playerId", async (req, res) => {
     totals = getInitilizedkeys();
     let games = getPlayers(arr, playerId);
 
-
+    // finding the sum of the result of the specif player stats(Bonus code)
     keys.forEach((key) => {
       totals[key] = games.reduce(
         (accumulator, currentValue) =>
@@ -63,9 +65,9 @@ app.get("/games/:playerId", async (req, res) => {
         0
       );
     });
-
+    // return the response based on the Id
     if (games.length < 1) {
-      res.json(404);
+      res.sendStatus(404);
     } else {
       tempHash = {};
       tempHash["Total Stats"] = { PlayerID: playerId, ...totals };
@@ -75,8 +77,10 @@ app.get("/games/:playerId", async (req, res) => {
   });
 });
 
+// method for handling the POST request(Bonus code)
 app.post("/players", async (req, res) => {
   let temp_array = [];
+  // Apending in the csv file
   await promise.then(function (arr) {
     temp_array = arr;
     temp_array.push(req.body);
@@ -87,10 +91,11 @@ app.post("/players", async (req, res) => {
   const new_player = req.body.PlayerId;
   let games = getPlayers(temp_array, new_player);
 
+  // returning the new added player
   if (games.length < 1) {
-    res.json(404);
+    res.sendStatus(500);
   } else {
-    res.json(games);
+    res.status(201).json(games);
   }
 });
 
