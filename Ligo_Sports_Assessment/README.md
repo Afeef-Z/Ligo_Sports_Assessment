@@ -10,6 +10,8 @@ What things you need to install the software and how to install them
 - fs
 - csv-parse
 - objects-to-csv
+- jest
+- supertest
 
 ### Installation
 
@@ -17,18 +19,30 @@ What things you need to install the software and how to install them
 - npm i express
 - npm i csv-parse
 - npm i objects-to-csv
+- npm i jest
+- npm i supertest
+
+Command to install all the dependencies:
+```npm i```
 
 ### Running the project
 
 Instructions on how to run the project in a development environment
 
-- will use this command `node server.js`
+Will use this command:
+ ```node server.js```
 
-## How to make a GET request:
+### Running the test cases
+
+1. Run the server using this command:
+```node server.js```
+2. Run testcase using this command:
+```npm test```
+### How to make a GET request:
   Send the GET request using this following command:
-  - `http://localhost:3000/games/:Id`
+  ```curl http://localhost:3000/games/:Id```
 
-## How to make a POST request:
+### How to make a POST request:
   Send the POST request using the following command:
   ```
    curl -X POST -H "Content-Type: application/json" -d '{"PlayerId": "99",
